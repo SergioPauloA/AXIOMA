@@ -1,0 +1,650 @@
+<html class="dark" lang="pt-br"><head></head><body class="bg-background selection:bg-primary selection:text-on-primary overflow-x-hidden">```html
+
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>AXIOMA // URBAN SCIENCE CORE</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Anton&amp;family=Space+Mono:wght@400;700&amp;family=Archivo+Narrow:wght@400;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        :root {
+            --physics-blue: #00f0ff;
+            --chem-green: #39ff14;
+            --math-red: #ff3131;
+        }
+
+        body {
+            background-color: #141313;
+            color: #e5e2e1;
+            overflow-x: hidden;
+            font-family: 'Space Mono', monospace;
+        }
+
+        .brutal-border {
+            border: 4px solid #c9c6c5;
+        }
+
+        .hard-shadow {
+            box-shadow: 8px 8px 0px 0px rgba(0,0,0,1);
+        }
+
+        .hard-shadow-primary {
+            box-shadow: 6px 6px 0px 0px #c9c6c5;
+        }
+
+        .glitch-text {
+            text-shadow: 2px 0 #ff3131, -2px 0 #00f0ff;
+        }
+
+        @keyframes glitch-anim {
+            0% { transform: translate(0); clip-path: inset(0 0 0 0); text-shadow: 2px 0 #ff3131, -2px 0 #00f0ff; }
+            10% { transform: translate(-2px, 1px); clip-path: inset(20% 0 50% 0); text-shadow: 3px 1px #ff3131, -3px -1px #00f0ff; }
+            20% { transform: translate(2px, -1px); clip-path: inset(80% 0 5% 0); text-shadow: -2px 1px #ff3131, 2px -1px #00f0ff; }
+            30% { transform: translate(-1px, 2px); clip-path: inset(10% 0 70% 0); opacity: 0.8; }
+            40% { transform: translate(1px, -2px); clip-path: inset(40% 0 40% 0); }
+            50% { transform: translate(-2px, -1px); clip-path: inset(60% 0 10% 0); text-shadow: 4px 0 #ff3131, -4px 0 #00f0ff; }
+            60% { transform: translate(2px, 2px); clip-path: inset(0 0 0 0); opacity: 1; }
+            100% { transform: translate(0); clip-path: inset(0 0 0 0); }
+        }
+
+        .glitch-active {
+            animation: glitch-anim 0.4s cubic-bezier(.25, .46, .45, .94) both infinite;
+            filter: hue-rotate(90deg) brightness(1.2);
+            pointer-events: none;
+        }
+
+        .brand-glitch:hover {
+            animation: glitch-anim 0.2s cubic-bezier(.25, .46, .45, .94) both infinite;
+        }
+
+        .taped-corner::before {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: -10px;
+            width: 40px;
+            height: 15px;
+            background: rgba(238, 238, 238, 0.4);
+            transform: rotate(-45deg);
+            z-index: 10;
+        }
+
+        .formula-card:hover {
+            transform: translate(-4px, -4px);
+            box-shadow: 12px 12px 0px 0px #c9c6c5;
+        }
+
+        .hidden-answer {
+            filter: blur(12px);
+            transition: filter 0.4s ease-in-out, opacity 0.4s ease-in-out;
+            cursor: pointer;
+            user-select: none;
+        }
+        .hidden-answer.revealed {
+            filter: blur(0);
+            user-select: auto;
+        }
+
+        .marquee {
+            white-space: nowrap;
+            overflow: hidden;
+            display: inline-block;
+            animation: marquee 20s linear infinite;
+        }
+        @keyframes marquee {
+            0% { transform: translateX(100%); }
+            100% { transform: translateX(-100%); }
+        }
+
+        .sidebar-active {
+            background-color: #c9c6c5 !important;
+            color: #1c1b1b !important;
+            font-weight: 700;
+            transform: skewY(1deg);
+            border: 2px solid black;
+        }
+
+        #glitch-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(201, 198, 197, 0.1);
+            z-index: 9999;
+            pointer-events: none;
+            display: none;
+        }
+        #glitch-overlay.active {
+            display: block;
+            animation: glitch-anim 0.3s linear infinite;
+        }
+
+        .terminal-header {
+            background: repeating-linear-gradient(0deg, rgba(0,0,0,0.15), rgba(0,0,0,0.15) 1px, transparent 1px, transparent 2px);
+        }
+
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 8px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #1c1b1b;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #c9c6c5;
+            border: 2px solid #1c1b1b;
+        }
+
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(12px);
+            z-index: 100;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+        }
+        .modal-active {
+            display: flex;
+        }
+        
+        .formula-display-container {
+            overflow-x: auto;
+            white-space: nowrap;
+            padding-bottom: 8px;
+        }
+        .formula-display-container::-webkit-scrollbar {
+            height: 4px;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                "primary": "#c9c6c5",
+                "on-primary": "#1c1b1b",
+                "background": "#141313",
+                "surface": "#141313",
+                "surface-container": "#201f1f",
+                "surface-container-low": "#1c1b1b",
+                "surface-container-lowest": "#0e0e0e",
+                "surface-container-high": "#2b2a2a",
+                "surface-container-highest": "#353434",
+                "on-surface": "#e5e2e1",
+                "on-surface-variant": "#c4c7c7",
+                "outline": "#8e9192"
+              },
+              "borderRadius": {
+                "DEFAULT": "0px",
+                "lg": "0px",
+                "xl": "0px"
+              },
+              "spacing": {
+                "unit": "4px",
+                "gutter": "24px",
+                "margin-desktop": "48px",
+                "container-max": "1440px",
+                "margin-mobile": "16px"
+              },
+              "fontFamily": {
+                "body-lg": ["Space Mono"],
+                "headline-md": ["Anton"],
+                "label-caps": ["Archivo Narrow"],
+                "body-md": ["Space Mono"],
+                "headline-lg": ["Anton"],
+                "display-xl-mobile": ["Anton"],
+                "display-xl": ["Anton"]
+              },
+              "fontSize": {
+                "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                "headline-md": ["32px", {"lineHeight": "32px", "fontWeight": "400"}],
+                "label-caps": ["14px", {"lineHeight": "16px", "letterSpacing": "0.1em", "fontWeight": "700"}],
+                "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                "headline-lg": ["40px", {"lineHeight": "40px", "fontWeight": "400"}],
+                "display-xl-mobile": ["48px", {"lineHeight": "44px", "fontWeight": "400"}],
+                "display-xl": ["84px", {"lineHeight": "80px", "letterSpacing": "-0.02em", "fontWeight": "400"}]
+              }
+            },
+          },
+        }
+    </script>
+<div id="glitch-overlay"></div>
+<!-- TACTICAL BRIEFING MODAL -->
+<div class="modal-overlay" id="mission-modal" onclick="closeMissionModal(event)">
+<div class="bg-surface brutal-border w-full max-w-5xl max-h-[90vh] overflow-hidden relative shadow-[20px_20px_0px_0px_rgba(0,0,0,1)] flex flex-col md:flex-row" onclick="event.stopPropagation()">
+<button class="absolute top-4 right-4 z-50 bg-primary text-black w-10 h-10 flex items-center justify-center brutal-border hover:bg-white transition-colors" onclick="closeMissionModal()">
+<span class="material-symbols-outlined">close</span>
+</button>
+<!-- Fixed: Mission image quality/zoom fix with object-contain and background center -->
+<div class="w-full md:w-1/2 h-64 md:h-auto bg-black flex items-center justify-center overflow-hidden border-b-4 md:border-b-0 md:border-r-4 border-primary">
+<img alt="Mission Scene" class="max-w-full max-h-full object-contain" id="modal-img" src=""/>
+</div>
+<div class="w-full md:w-1/2 p-6 md:p-10 space-y-6 flex flex-col overflow-y-auto custom-scrollbar">
+<div class="flex items-center gap-2">
+<span class="bg-primary text-black px-2 py-1 font-label-caps text-xs" id="modal-id">MISSION_#01</span>
+<span class="border border-primary text-primary px-2 py-1 font-label-caps text-[10px]" id="modal-universe">UNIVERSE: CYBERPUNK</span>
+</div>
+<h2 class="font-headline-md text-3xl text-primary uppercase" id="modal-title">OBJECTIVE_TITLE</h2>
+<div class="space-y-4">
+<p class="font-body-md text-on-surface leading-relaxed" id="modal-prompt"></p>
+</div>
+<div class="pt-6 border-t-2 border-primary/20 mt-auto">
+<!-- Answer container with improved visibility control -->
+<div class="bg-black p-4 brutal-border border-primary/30 text-primary font-mono text-sm hidden-answer" id="modal-gabarito-container">
+<span class="text-[10px] opacity-50 mb-2 block">// DECRYPTED_GABARITO:</span>
+<span class="break-words" id="modal-gabarito"></span>
+</div>
+<button class="mt-4 w-full py-4 bg-primary text-on-primary font-label-caps text-sm border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-y-1 hover:shadow-none transition-all" id="modal-reveal-btn" onclick="toggleModalAnswer()">REVELAR GABARITO</button>
+</div>
+</div>
+</div>
+</div>
+<!-- MOBILE BOTTOM NAV -->
+<nav class="fixed bottom-0 left-0 w-full bg-surface border-t-4 border-primary z-50 flex md:hidden justify-around items-center py-2 px-2 shadow-[0_-4px_10px_rgba(0,0,0,0.5)]">
+<button class="flex flex-col items-center gap-1 p-2 text-primary" onclick="showView('home')">
+<span class="material-symbols-outlined">science</span>
+<span class="text-[10px] font-label-caps">LABS</span>
+</button>
+<button class="flex flex-col items-center gap-1 p-2 text-on-surface-variant" onclick="showView('subject')">
+<span class="material-symbols-outlined">functions</span>
+<span class="text-[10px] font-label-caps">THEORY</span>
+</button>
+<button class="flex flex-col items-center gap-1 p-2 text-on-surface-variant" onclick="showView('formula')">
+<span class="material-symbols-outlined">psychology</span>
+<span class="text-[10px] font-label-caps">DECRYPT</span>
+</button>
+<button class="flex flex-col items-center gap-1 p-2 text-on-surface-variant">
+<span class="material-symbols-outlined">folder_open</span>
+<span class="text-[10px] font-label-caps">ARCHIVE</span>
+</button>
+</nav>
+<!-- SIDEBAR (DESKTOP) -->
+<aside class="fixed left-0 top-0 h-full w-64 border-r-4 border-primary bg-surface z-40 hidden md:flex flex-col">
+<div class="p-6 border-b-4 border-primary">
+<h1 class="font-headline-md text-headline-md text-on-surface uppercase italic brand-glitch cursor-default">AXIOMA</h1>
+<div class="flex items-center gap-3 mt-4">
+<div class="w-10 h-10 bg-primary border-2 border-black flex items-center justify-center">
+<span class="material-symbols-outlined text-black">person</span>
+</div>
+<div>
+<p class="font-label-caps text-label-caps text-primary">OPERATIVE_01</p>
+<p class="font-label-caps text-[10px] text-on-surface-variant" id="user-sector">SECTOR: LABS</p>
+</div>
+</div>
+</div>
+<nav class="flex-grow flex flex-col pt-4">
+<button class="sidebar-active flex items-center gap-4 px-6 py-4 font-label-caps text-label-caps transition-all hover:translate-x-2" id="nav-home" onclick="showView('home')">
+<span class="material-symbols-outlined">science</span> LABS
+        </button>
+<button class="text-on-surface-variant hover:bg-surface-container-highest hover:text-on-surface flex items-center gap-4 px-6 py-4 font-label-caps text-label-caps transition-all hover:translate-x-2" id="nav-subject" onclick="showView('subject')">
+<span class="material-symbols-outlined">functions</span> THEORY
+        </button>
+<button class="text-on-surface-variant hover:bg-surface-container-highest hover:text-on-surface flex items-center gap-4 px-6 py-4 font-label-caps text-label-caps transition-all hover:translate-x-2" id="nav-formula" onclick="showView('formula')">
+<span class="material-symbols-outlined">psychology</span> DECRYPT
+        </button>
+<button class="text-on-surface-variant hover:bg-surface-container-highest hover:text-on-surface flex items-center gap-4 px-6 py-4 font-label-caps text-label-caps transition-all hover:translate-x-2">
+<span class="material-symbols-outlined">folder_open</span> ARCHIVE
+        </button>
+</nav>
+<div class="p-6">
+<button class="w-full py-4 bg-primary text-on-primary font-label-caps text-label-caps border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-y-1 hover:shadow-none transition-all active:scale-95">
+            UPGRADE ACCESS
+        </button>
+</div>
+</aside>
+<!-- HEADER -->
+<header class="md:ml-64 relative z-30">
+<div class="flex flex-wrap justify-between items-center w-full px-4 md:px-gutter py-4 max-w-container-max mx-auto border-b-4 border-primary bg-surface-container-lowest shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] -rotate-0 md:-rotate-1 gap-4">
+<div class="font-display-xl text-3xl sm:text-4xl md:text-display-xl text-primary uppercase tracking-tighter italic border-4 border-primary px-3 py-1 md:px-4 bg-surface-container-lowest -rotate-2 brand-glitch cursor-pointer transition-transform hover:scale-105" onclick="showView('home')">
+            AXIOMA
+        </div>
+<div class="flex gap-2 sm:gap-4 items-center">
+<span class="material-symbols-outlined text-primary text-2xl md:text-3xl">terminal</span>
+<span class="material-symbols-outlined text-primary text-2xl md:text-3xl">sensors</span>
+<span class="material-symbols-outlined text-primary text-2xl md:text-3xl">bolt</span>
+</div>
+</div>
+</header>
+<main class="md:ml-64 p-4 md:p-12 pb-24 md:pb-12 relative z-10 transition-opacity duration-200" id="main-canvas">
+<!-- VIEW: HOME -->
+<section class="space-y-8 md:space-y-16" id="view-home">
+<div class="relative py-8 md:py-12">
+<h2 class="font-headline-lg text-3xl sm:text-5xl md:text-7xl lg:text-[110px] xl:text-[120px] uppercase italic leading-[1.1] md:leading-none glitch-text break-words">
+                SOMAMOS NOSSA FORÇA, MULTIPLICAMOS NOSSO ALCANCE, DIVIDIMOS NOSSA MISSÃO E SUBTRAÍMOS NOSSAS DIFERENÇAS.
+            </h2>
+<div class="mt-8 max-w-2xl bg-surface p-4 md:p-6 brutal-border hard-shadow transform rotate-0 md:rotate-1">
+<p class="font-body-md md:font-body-lg text-body-md md:text-body-lg text-on-surface">
+                    O sistema tradicional é um <span class="bg-primary text-on-primary px-2">bug na matrix</span>. A educação não é um processo linear, é uma explosão urbana. Viemos para hackear o aprendizado com a estética do asfalto.
+                </p>
+</div>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8" id="materias-grid"></div>
+</section>
+<!-- VIEW: SUBJECT -->
+<section class="hidden space-y-8 md:space-y-12" id="view-subject">
+<div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 border-b-4 md:border-b-8 border-primary pb-6 md:pb-8 relative" id="subject-header"></div>
+<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-6" id="formulas-grid"></div>
+</section>
+<!-- VIEW: FORMULA DETAIL -->
+<section class="hidden space-y-8 md:space-y-12" id="view-formula">
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-6 md:gap-8">
+<!-- Left: Theory & Deconstruction -->
+<div class="lg:col-span-7 space-y-6 md:space-y-8" id="formula-detail-left"></div>
+<!-- Right: Exercises -->
+<div class="lg:col-span-5">
+<div class="bg-surface-container-lowest brutal-border border-primary p-4 sm:p-6 md:p-8 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] md:shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] space-y-6 md:space-y-8 lg:sticky lg:top-8" id="formula-detail-right">
+<div class="flex flex-wrap items-center justify-between border-b-2 md:border-b-4 border-primary pb-4 gap-2">
+<h3 class="font-headline-md text-xl md:text-headline-md uppercase text-primary">MISSÕES // <span id="mission-title">DYNAMICS</span></h3>
+<span class="font-label-caps bg-primary text-black px-2 md:px-3 py-1 font-bold text-xs md:text-sm">LVL: MASTER</span>
+</div>
+<div class="space-y-4 md:space-y-6 max-h-[500px] lg:max-h-[800px] overflow-y-auto pr-2 md:pr-4 custom-scrollbar" id="missions-list"></div>
+</div>
+</div>
+</div>
+</section>
+</main>
+<footer class="md:ml-64 bg-surface-container-lowest py-8 md:py-12 border-t-4 md:border-t-8 border-primary mt-12 md:mt-24 relative z-10 mb-16 md:mb-0">
+<div class="px-4 md:px-margin-desktop w-full flex flex-col md:flex-row justify-between items-center gap-6 md:gap-8">
+<div class="font-label-caps text-primary text-lg md:text-2xl font-bold tracking-widest italic flex items-center gap-4">
+<span class="w-6 h-6 md:w-8 md:h-8 bg-primary"></span> AXIOMA CORE // 2026
+        </div>
+<div class="flex flex-wrap justify-center gap-4 md:gap-8 font-label-caps text-xs md:text-label-caps">
+<a class="text-on-surface-variant hover:text-primary transition-all hover:skew-x-12 inline-block" href="#">TERMS</a>
+<a class="text-on-surface-variant hover:text-primary transition-all hover:skew-x-12 inline-block" href="#">SYSTEM_LOGS</a>
+<a class="text-on-surface-variant hover:text-primary transition-all hover:skew-x-12 inline-block" href="#">SUPPORT</a>
+</div>
+</div>
+<div class="mt-8 md:mt-12 overflow-hidden bg-primary py-2 border-y-2 md:border-y-4 border-black">
+<div class="marquee font-label-caps text-[10px] md:text-xs text-on-primary uppercase font-bold tracking-widest">
+            KNOWLEDGE IS A WEAPON // BREAK THE SYSTEM // STAY BRUTAL // PHYSICS IS THE LAW // CHEMISTRY IS THE REACTION // MATH IS THE LOGIC // AXIOMA_SYSTEM_ONLINE // PROTOCOL_404_VOID // HACK_THE_FUTURE
+        </div>
+</div>
+</footer>
+<script>
+    // --- MASTER DATA & MODAL LOGIC ---
+    const universes = [
+        { name: "Velozes e Furiosos", img: "https://lh3.googleusercontent.com/aida/AP1WRLtmfCncwk3e_vVq_tdwKuu-eZRiB4PUA8ZCWWPrRaAWU-zL6McBDYGkA2Os2NFgZQOUUgBlFcjs1fWFGov2NJHiZwkBldYD0G19zWMWU2A9LV6rps6loCqcm3GD7zp0p9sYOdZvZdyLqqJiREbMEhECE7JAPS2cI_3B13GXJ1w3UmZbDo7cm-iPnl6m35ucmW4ki6SEcb9nFTI5nk6ofNXWSt56ZJBfmkNgeXbytH67AinHLrhghLz9x2w" },
+        { name: "Breaking Bad", img: "https://lh3.googleusercontent.com/aida/AP1WRLuo2M92Z-vJ7DCHa8O6KoH0E4BkMAxVjfxK8vfhje_bH2XfyPEKtBYwzlEkthuU5ZvMZNwr0Ewu-b1LiyRhWSQB1L_BuMlJqQ_qf7j38mNMCCoSy1rd1BFnfiGXFEdAHA1fQRcBPF1lGb88eyMjmqsRofqAO3b29VH-Ft1ZZCh0cRKc0IoWf5rLFJg03W-xPxfq413dANE8CqSvx_Lu6ttxixl8oCczkcl52dSC5KEZbZLWwAmtBr8GdqX8" },
+        { name: "Cyberpunk 2077", img: "https://lh3.googleusercontent.com/aida/AP1WRLtFy48OSF65kFUlUHvELydflMWAV8GOXLesxpMI7Rl5L9Mr8VA0dWkvsmGC7MAxig_FTiGG7UcQmvcymGjb1UYInqKuMbjRhRnf3LAxXoySMlWHHnjtIcP0I71qiajFVyEYQH9-cQi8SPbhmxSrrFq1II3NDeKki0uYxHd4iwY0Aj4Bz4hOncRn2caXz_NzjHN9HX0Ee5fJstcisO3HrQti0aCVAT3Lny9BtwdE0FSLhKPFwxX_EWHtScE" },
+        { name: "Star Wars", img: "https://lh3.googleusercontent.com/aida/AP1WRLvf3rOXV_XczkQa-2EdLhmqBnL2NQDzFl1giP73qnf1vo0LtjxZlOBkpKtnkMLcARlSFaS5MiUd1ynt35YpF-Xx26C0okkydlxvOiFDJ8n_9HHFFtnbkJt3UZUTfVxCIn_YB_O0byegVPz9oZHbUf5FWIaVxYluvs57lfzEy0swPxRfJI5Y65JipX290wYBruNvZXi7SUnkrsC4Zo8fJNtUTRhm5Axws2Iot62Gv1NugXvrDOMWCNBrp1dA" },
+        { name: "Formula 1", img: "https://lh3.googleusercontent.com/aida-public/AB6AXuBqymDcSKY5R54uaiNYH64-V54Eg5wvWuljk5VXZruZ4IeUELSIfnPuwVnCXW8BG5Ebp0-mF6pTResGjcg4vj_ESAE4z7fj54KJ_q_ANh77zER-BsWIzz1EA0NkfjwY0pY7-36EMU1wfU_CbC_YcmB_9EUby4EQEGU2wlzDXHxZULmBPUTBUgAvCwP-RDY-wqVSrfock1QZCPEbZf6z0YK3kHkIK2D1_gE-kG3ETPM9S2Q8h62k3Ir_M_fnH_zYB50socdIi63BFXWA" },
+        { name: "Stranger Things", img: "https://lh3.googleusercontent.com/aida-public/AB6AXuBKZgnxCvpNZuiKHZPsg01wcKRzgIGLkPi4XgdkyhtlPvnqGhYHPYlHLTlFIAid3aWXw1dVsEJf0_wZxiMurx-nhEy43n-u0eFefMnoC1LRusaMse6WX6fwQIddZLhooX-yyo1FLo3vtHY90q0V_zJ_lj56K2ycJxJzEUaDlFGOpBENFVQ0GMj0pB8sNcEHZ8YDa3_bk36Gy65SOoxsQX9ExOAADrSe2mquNbZmaVXqTXykQLU9YBXMtUNXST5T9-DzZ2vB5bXgrPdF" },
+        { name: "Marvel", img: "https://lh3.googleusercontent.com/aida-public/AB6AXuCUn0IJMfZarw4ZWpA572fLFPRUJC6pt-iGN7bxg7C5L1obQzJBzLU8T7FulfKB2pVdI5vZfZzkKRAHdYu47bk44OvOGXLbsDClNdJoPHx5Oe846QrAwy4nUolzq0wBI2vfjTRG4iJBnNCsqujce2Cj_gcwhL9hAftN99i6l7YPx3Ms3sxmSR8pIWrn--_x1R-sveqjRhf_TFaj_DXRdCpGANRGIqBve3haw2uJds4HhUPUT1xXBUo-Jcfh2xEDzXZq8i-sLQ3tfez_" },
+        { name: "League of Legends", img: "https://lh3.googleusercontent.com/aida-public/AB6AXuBrvBUNpg6NUeygdXL6K2IKE2EnqhAqWnD2U6fxCIOv_-vXZ-VS_RdHhyCoDFAydywviYvzRE6GrFDCpDUM9zqune7ioyEFhsQd6d87cS5_K3dyX_al80V16tQcc8CifRxezkBs9eIFFrZ1pSuU7j4yMQUFrx9JLNSp7c1mhF0nRnxnFLgAGs9FpfUWcBmVct2Z2bzUnYlJujO4K6cijTDXApRe4zEF0WnxVRez45-Vyv3Wui9M7nXhQLQrpGq1YgfgRY0rR3VxNt3A" },
+        { name: "Duna", img: "https://lh3.googleusercontent.com/aida-public/AB6AXuAa-1K9sudKuQnqSf4r3_5ziiaEJNjKN1M6ka00JLdp2GmNMB99EkDwTK5umujoeeOIHexAerspT5a9ocL56f47XDTkVnrGHZHbvMYn49mG2C9kWFTNcEVeJEGJckfypO98b6FFUa7EYgeC_5HSoxbsbJHo5u_Xr_H4uudfV5rbrKd1CTZXIjrBd2MVmBItqGfEAuM1un65GQ4wDWCHJ57LYdwjmyjrMyE3_tOKcALDzPRezoKnWN2By52wEOmcqjHNIZwUlzEsyivS" },
+        { name: "The Witcher", img: "https://lh3.googleusercontent.com/aida-public/AB6AXuDswRKgmFmSHD2xNQozNNWxwGOcPr-FfN3KJ1-4aTiOe8_ywMZPi4wwjarse74neylcE_a2scqzkj82ifx3KP6WeKpYEbpc8PmVU2yITJHzT8ELHQvJff-ogRc57QXvVqENSXUak4pbu9GXf0Ajrx5XHCjobhb6F66pPEAhpMP8BcNgZO7WgXFh4HLME7XicKG574DT2zJvCKwrN-H8k0wHbs2cKeZXZb8nzPOS2hWfcxUQs0NZGp3K1LBvMGvD77dtOnKGyEQc2pVu" },
+        { name: "Champions League", img: "https://lh3.googleusercontent.com/aida-public/AB6AXuDRsJbpdZG_n8FR50bZA44gAtZAO5GHfMD3ApL7PIHSRDBGWcshJTpy4wVv0-DMFN4iM1F7UucwJteTakvKZoWa_EIZ8wRTpoKZTiRlJaF28_26xK4eBKuLTXckq9Ghb8GIQqQO73bD42fOSN5tDo5mXnfYlpp-CmBHH7IxiijtDknQWRF39wBqxz2X_regNcSlZCjKlTuXug7YYzElC-t4lvndLub6hCgyZx-xD4CkydYZsXERY6sqJpIIu2HO8EThRw_kZQfdViJf" },
+        { name: "NBA", img: "https://lh3.googleusercontent.com/aida-public/AB6AXuD1wet9KCkHHEP4fba9Zp7mxUCVheE5QASP_ar58WtKJ7jn1okAaVMXyHM0CoSl6KSxBmd_pyhywo2QKU32OBgef3vCYpHCsJ-pIUZVgmuHHX0Aak5aXyt1HW3W_X6qeoEkt7tWeL3uRhfm3uSour8M41ivCWss7XRzBjpycn5NanLegHGVwGpflVZ44xvHFKpzzVekxW2ZBkRrEFzCWpEESdiNEgJAOGU9XajaH-1ExFYsGeXUyMPB5aNTAnWdZUErmk0l0uTn-vSY" }
+    ];
+
+    const missionsPerFormula = 15;
+
+    function generateMissions(formulaDisplay, formulaName) {
+        return Array.from({length: missionsPerFormula}, (_, i) => {
+            const universeObj = universes[i % universes.length];
+            
+            return {
+                id: i + 1,
+                universe: universeObj.name,
+                img: universeObj.img,
+                contexto: `Operação de campo nível ${i < 5 ? 'EASY' : i < 10 ? 'MEDIUM' : 'HARD'}.`,
+                enunciado: `Desafio Estratégico #${i+1}: No cenário de ${universeObj.name}, você deve aplicar a lógica de ${formulaDisplay} (${formulaName}) para superar a barreira sistêmica. Considere os parâmetros do Setor ${Math.floor(Math.random()*999)} e calcule o resultado exato.`,
+                gabarito: `DADOS PROCESSADOS // ${formulaDisplay} VERIFICADO // ACESSO AUTORIZADO AO NÚCLEO.`
+            };
+        });
+    }
+
+    const materiasData = {
+        fisica: {
+            id: 'fisica', nome: 'COLAPSO QUÂNTICO', tag: 'PHYSICS', cor: '#00f0ff',
+            img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDYPIIUJIBfnb7mT0EvZaCHJytBpvtT8wRW8xm15f-TUdvk231nzxnLqN_h_0r18a8tKhXRGnS7xFBngaiSz4xgEXDvOZ-w-lRF2cvuhk6xOrIsczC532Mi-NlcDtf2khzuwDEDDHd0u1RNb6yAWqEh9URScaZzUqp3fhAQmb6OF3wI3TEiDpApJnnqV_UtBqW9MSJlXC7pdr2Om7jIJdk7E5DB30ohsMTn6SnXdXPWa7T3wfxYWjCOctII0kXkwk5DSAcFoKUrc2AS',
+            slogan: 'Aceleração máxima. Gravidade zero.',
+            formulas: [
+                { id: 'F=ma', nome: '2ª LEI DE NEWTON', display: 'F = m.a', briefing: 'O motor da causalidade. A força é o que altera o estado de inércia do sistema.', desc: 'A força bruta que move a cidade e define o impacto.' },
+                { id: 'P=mg', nome: 'FORÇA PESO', display: 'P = m.g', briefing: 'A âncora da realityade. Como a massa interage com o campo gravitacional local.', desc: 'O que te mantém no chão enquanto o mundo gira.' },
+                { id: 'V=RI', nome: 'LEI DE OHM', display: 'V = R.i', briefing: 'O fluxo de energia urbana. Tensão, resistência e corrente elétrica.', desc: 'A voltagem que alimenta os outdoors neon.' },
+                { id: 'Ec=mv2/2', nome: 'ENERGIA CINÉTICA', display: 'Ec = mv²/2', briefing: 'Potencial em movimento. A energia acumulada pela velocidade.', desc: 'Energia do asfalto em movimento.' },
+                { id: 'v=at', nome: 'VELOCIDADE', display: 'v = v0 + a.t', briefing: 'O vetor do progresso. Como a aceleração muda sua posição no tempo.', desc: 'Tempo de resposta em perseguições urbanas.' },
+                { id: 'W=Fd', nome: 'TRABALHO', display: 'W = F.d', briefing: 'Energia gasta na transformação. Força aplicada ao longo de um percurso.', desc: 'O custo energético de cada movimento.' },
+                { id: 'p=mv', nome: 'MOMENTO LINEAR', display: 'p = m.v', briefing: 'A inércia em movimento. O ímpeto de um corpo em deslocamento.', desc: 'A força de impacto de uma colisão.' },
+                { id: 'f=1/T', nome: 'FREQUÊNCIA', display: 'f = 1/T', briefing: 'O ritmo do sistema. Ciclos por segundo.', desc: 'O clock da CPU central da cidade.' },
+                { id: 'Q=It', nome: 'CARGA ELÉTRICA', display: 'Q = i.t', briefing: 'Acúmulo de potencial. Corrente sustentada pelo tempo.', desc: 'A carga das baterias dos drones de vigilância.' },
+                { id: 'E=mc2', nome: 'RELATIVIDADE', display: 'E = m.c²', briefing: 'A essência da matéria. Massa e energia são faces da mesma moeda.', desc: 'O poder bruto escondido no átomo.' }
+            ]
+        },
+        quimica: {
+            id: 'quimica', nome: 'QUÍMICA NA VEIA', tag: 'CHEMISTRY', cor: '#39ff14',
+            img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuD82vAiE_YXWGFILxXPcu6ujLu-5Rkhd0BsSSewVtxIgBEmQcfbSjjt6hlsg3-N1dfAlEhuO2a1oz_fnyapFMhMrAXjyIm4W-UJ4u3Q-P6ClOZiQgEB_TzmgydxCngnmA8lEOxYRvqdqKDhoi_AE2sd8Fv02lm61mWFRxHye9dg-DW7urUj5_ZOlUxpAyU4X4xJ6LnBFRzWb--CnvLAWjcEB-sJCH-z1F1KfHKZk98IsWz-_EJfIy_wjKAUc0MkLSx847WTvhzFKvxQ',
+            slogan: 'Reações em cadeia no ritmo do beat.',
+            formulas: [
+                { id: 'Q=mcDT', nome: 'CALORIMETRIA', display: 'Q = m.c.ΔT', briefing: 'Trocas térmicas sistêmicas. O calor necessário para mudar o estado.', desc: 'Calor sensível e trocas térmicas urbanas.' },
+                { id: 'PV=nRT', nome: 'GASES IDEAIS', display: 'P.V = n.R.T', briefing: 'A pressão do ambiente. Volume e temperatura em equilíbrio perfeito.', desc: 'Pressão atmosférica no topo dos prédios.' },
+                { id: 'mol', nome: 'ESTEQUIOMETRIA', display: 'n = m/M', briefing: 'A balança da criação. Proporções exatas para reações controladas.', desc: 'A conta exata para a mistura perfeita.' },
+                { id: 'pH', nome: 'POTENCIAL HIDROGENIÔNICO', display: 'pH = -log[H+]', briefing: 'Acidez e alcalinidade. O equilíbrio corrosivo do sistema.', desc: 'A pureza da água nos setores baixos.' },
+                { id: 'd=m/V', nome: 'DENSIDADE', display: 'd = m/V', briefing: 'Concentração de massa. O quanto o sistema está compactado.', desc: 'Diferenciando ligas metálicas clandestinas.' },
+                { id: 'C=n/V', nome: 'CONCENTRAÇÃO', display: 'C = n/V', briefing: 'A força da solução. Molaridade em ambientes urbanos.', desc: 'Dosagem de aditivos em combustíveis.' },
+                { id: 'v=kAB', nome: 'CINÉTICA QUÍMICA', display: 'v = k.[A].[B]', briefing: 'A velocidade da mudança. Como reagentes colidem para criar.', desc: 'O tempo de explosão de um reator.' },
+                { id: 'Ka', nome: 'EQUILÍBRIO', display: 'Ka = [P]/[R]', briefing: 'Estabilidade dinâmica. O ponto onde a reação se sustenta.', desc: 'Homeostase em biossistemas artificiais.' },
+                { id: 'E=E0', nome: 'ELETROQUÍMICA', display: 'ΔE = Ecat - Ean', briefing: 'Potencial de oxirredução. O fluxo de elétrons em baterias.', desc: 'Tensão de pilhas galvânicas urbanas.' },
+                { id: 'P=m/M', nome: 'MASSA MOLAR', display: 'M = m/n', briefing: 'O peso da identity química. Identificação de elementos.', desc: 'Cálculo de massas para síntese laboratorial.' }
+            ]
+        },
+        math: {
+            id: 'math', nome: 'FRACTAL CREW', tag: 'MATH', cor: '#ff3131',
+            img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCVsrCZAITSRrB5pVZISGn3I4_LDO_GBiA-MC0zgouwuScpO1-9HpgxfX-ZUnH1QDRRrKV-VP-d_l2Udx_KQOMrPDE8gBrtUQJHvirTzKFASKy-Qj7NF2b8SDX3zdzeJx3AlyQts-kgrde1AG2DwHxuuQSboEgJTRkHck5xzPdNaXM3LETJHYq65RehnLB7tYd1iNf_4odczQdn_Zuo4t4dUmeawQ3ouK8amzDjGhzyVCCFUWQ2YdXeFROxUq5oZE8LZ66ELsGocJ6b',
+            slogan: 'Cálculos complexos. Estilo bruto.',
+            formulas: [
+                { id: 'pitagoras', nome: 'PITÁGORAS', display: 'a² = b² + c²', briefing: 'A geometria da cidade. O caminho mais curto entre dois pontos.', desc: 'Triangulando o sinal wi-fi entre prédios.' },
+                { id: 'bhaskara', nome: 'BHASKARA', display: 'x = -b ± √Δ / 2a', briefing: 'Raízes do caos. Encontrando os pontos de intersecção da realityade.', desc: 'Resolvendo equações de segundo grau urbanas.' },
+                { id: 'log', nome: 'LOGARITMOS', display: 'log a b = x', briefing: 'Escala de crescimento. Medindo o progresso exponencial.', desc: 'Crescimento das redes de comunicação.' },
+                { id: 'seno', nome: 'TRIGONOMETRIA', display: 'sen θ = O/H', briefing: 'Ondas e ciclos. A harmonia das oscilações sistêmicas.', desc: 'Cálculo de ângulos em estruturas brutas.' },
+                { id: 'derivada', nome: 'CÁLCULO', display: 'f\'(x) = dy/dx', briefing: 'Taxa de variação instantânea. O pulso da mudança.', desc: 'Aceleração de fluxos de dados.' },
+                { id: 'PA', nome: 'PROGRESSÃO ARITMÉTICA', display: 'an = a1 + (n-1)r', briefing: 'Passos constantes. A linearidade do asfalto.', desc: 'Contagem de blocos em setores repetitivos.' },
+                { id: 'PG', nome: 'PROGRESSÃO GEOMÉTRICA', display: 'an = a1 . q^(n-1)', briefing: 'Explosão de dados. Onde um gera muitos.', desc: 'Replicação de vírus no mainframe.' },
+                { id: 'prob', nome: 'PROBABILIDADE', display: 'P = n(A)/n(S)', briefing: 'A sorte dos operativos. Calculando o risco de detecção.', desc: 'Chance de sucesso em missões críticas.' },
+                { id: 'matriz', nome: 'MATRIZES', display: '[A].[B] = [C]', briefing: 'A grade de controle. Transformações lineares da malha.', desc: 'Processamento de imagens de vigilância.' },
+                { id: 'area', nome: 'GEOMETRIA ESPACIAL', display: 'V = Ab . h', briefing: 'Volume de contenção. O espaço que ocupamos no vazio.', desc: 'Armazenamento em silos industriais.' }
+            ]
+        }
+    };
+
+    let currentMateria = null;
+    let currentFormula = null;
+    let currentMission = null;
+
+    // --- NAVIGATION ---
+    function showView(viewId) {
+        const main = document.getElementById('main-canvas');
+        const overlay = document.getElementById('glitch-overlay');
+        overlay.classList.add('active');
+        main.classList.add('glitch-active');
+        
+        setTimeout(() => {
+            document.querySelectorAll('main > section').forEach(s => s.classList.add('hidden'));
+            const target = document.getElementById('view-' + viewId);
+            if(target) target.classList.remove('hidden');
+
+            document.querySelectorAll('aside nav button').forEach(b => {
+                b.classList.remove('sidebar-active');
+                b.classList.add('text-on-surface-variant');
+            });
+            const btnId = `nav-${viewId === 'home' ? 'home' : (viewId === 'subject' ? 'subject' : 'formula')}`;
+            const activeBtn = document.getElementById(btnId);
+            if(activeBtn) {
+                activeBtn.classList.add('sidebar-active');
+                activeBtn.classList.remove('text-on-surface-variant');
+            }
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            setTimeout(() => {
+                overlay.classList.remove('active');
+                main.classList.remove('glitch-active');
+            }, 200);
+        }, 200);
+    }
+
+    function init() {
+        const grid = document.getElementById('materias-grid');
+        grid.innerHTML = '';
+        Object.values(materiasData).forEach(m => {
+            grid.innerHTML += `
+                <div class="group cursor-pointer bg-surface p-6 brutal-border transition-transform hover:-translate-y-2" 
+                     style="border-color: ${m.cor}; box-shadow: 8px 8px 0px 0px rgba(0,0,0,1);"
+                     onclick="showSubject('${m.id}')">
+                    <div class="font-label-caps text-xs mb-2" style="color: ${m.cor}">MOD: ${m.tag}</div>
+                    <h3 class="font-headline-md text-2xl uppercase mb-4" style="color: ${m.cor}">${m.nome}</h3>
+                    <div class="h-40 bg-surface-container overflow-hidden border-2" style="border-color: ${m.cor}33">
+                        <img class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all" src="${m.img}"/>
+                    </div>
+                    <p class="mt-4 font-body-md text-sm text-on-surface-variant">${m.slogan}</p>
+                </div>`;
+        });
+    }
+
+    function showSubject(materiaId) {
+        currentMateria = materiasData[materiaId];
+        const header = document.getElementById('subject-header');
+        header.style.borderColor = currentMateria.cor;
+        header.innerHTML = `
+            <div class="absolute -top-4 -left-2 text-black px-2 font-label-caps text-[10px] italic" style="background-color: ${currentMateria.cor}">UNAUTHORIZED_ACCESS_GRANTED</div>
+            <div>
+                <span class="text-black px-2 py-1 font-label-caps text-label-caps italic" style="background-color: ${currentMateria.cor}">SECTOR: ${currentMateria.tag}</span>
+                <h2 class="font-headline-lg text-4xl uppercase mt-2 text-on-surface">${currentMateria.nome}</h2>
+            </div>
+            <div class="md:text-right">
+                <p class="font-label-caps text-label-caps italic" style="color: ${currentMateria.cor}">"Hacking the foundations of reality."</p>
+                <p class="text-on-surface-variant text-body-md">— AXIOMA_LOG_2026</p>
+            </div>`;
+
+        const grid = document.getElementById('formulas-grid');
+        grid.innerHTML = '';
+        currentMateria.formulas.forEach(f => {
+            grid.innerHTML += `
+                <div class="formula-card bg-surface p-6 brutal-border cursor-pointer relative" 
+                     style="border-color: ${currentMateria.cor}; box-shadow: 6px 6px 0px 0px rgba(0,0,0,1);"
+                     onclick="showFormula('${f.id}')">
+                    <span class="absolute top-1 right-2 font-label-caps text-[8px] text-on-surface-variant">LVL_MASTER</span>
+                    <div class="formula-display-container">
+                        <h4 class="font-headline-md text-2xl" style="color: ${currentMateria.cor}">${f.display}</h4>
+                    </div>
+                    <p class="font-label-caps text-xs mt-2 uppercase truncate">${f.nome}</p>
+                </div>`;
+        });
+        document.getElementById('user-sector').innerText = `SECTOR: ${currentMateria.tag}`;
+        showView('subject');
+    }
+
+    function showFormula(formulaId) {
+        currentFormula = currentMateria.formulas.find(f => f.id === formulaId);
+        const leftPanel = document.getElementById('formula-detail-left');
+        // FIXED: Adjustment in the formula badge positioning and layout to prevent clipping and ensure vertical centering
+        leftPanel.innerHTML = `
+            <div class="bg-surface p-8 brutal-border relative overflow-hidden" style="border-color: ${currentMateria.cor};">
+                <div class="absolute top-0 left-0 w-full h-1 opacity-20 terminal-header" style="background-color: ${currentMateria.cor}"></div>
+                <div class="absolute top-4 md:top-6 right-4 md:right-6 z-10">
+                    <div class="text-black px-4 md:px-6 py-3 md:py-4 border-4 border-black rotate-0 md:rotate-3 font-headline-md text-xl md:text-2xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] flex items-center justify-center min-h-[56px] leading-none" style="background-color: ${currentMateria.cor}">
+                        ${currentFormula.display}
+                    </div>
+                </div>
+                <h2 class="font-headline-lg text-4xl uppercase italic border-b-4 pb-4 mt-20 md:mt-24" style="border-color: ${currentMateria.cor}; color: ${currentMateria.cor}">${currentFormula.nome}</h2>
+                <div class="mt-8 space-y-6">
+                    <div class="p-6 border-4 bg-surface-container-high" style="border-color: ${currentMateria.cor}">
+                        <h3 class="font-label-caps text-primary mb-2 flex items-center gap-2"><span class="material-symbols-outlined text-sm">info</span> THEORETICAL BRIEFING: THE ENGINE OF REALITY</h3>
+                        <p class="font-body-lg text-on-surface italic">"${currentFormula.briefing}"</p>
+                    </div>
+                    <div class="p-6 border-2 bg-surface-container" style="border-color: ${currentMateria.cor}4d">
+                        <p class="font-body-md text-on-surface">${currentFormula.desc}</p>
+                        <p class="mt-4 text-[10px] font-mono text-on-surface-variant italic break-all">// PROTOCOLO ATIVADO: 15 MISSÕES DISPONÍVEIS</p>
+                    </div>
+                </div>
+            </div>`;
+
+        document.getElementById('mission-title').innerText = currentFormula.nome;
+        const missionsList = document.getElementById('missions-list');
+        missionsList.innerHTML = '';
+        
+        const missions = generateMissions(currentFormula.display, currentFormula.nome);
+        missions.forEach(m => {
+            const missionData = encodeURIComponent(JSON.stringify(m));
+            missionsList.innerHTML += `
+                <div class="p-6 bg-surface border-4 border-surface-container-high relative group hover:border-primary transition-all cursor-pointer" onclick="openMissionModal(JSON.parse(decodeURIComponent('${missionData}')))">
+                    <div class="absolute -top-3 -left-3 bg-primary text-black font-label-caps px-2 py-1 text-[10px] border-2 border-black">MISSION_#${m.id.toString().padStart(2, '0')}</div>
+                    <div class="mb-2 pt-2">
+                        <span class="text-[10px] text-primary/60 font-mono uppercase">${m.universe}</span>
+                    </div>
+                    <p class="font-body-md text-sm leading-relaxed truncate">${m.enunciado}</p>
+                    <div class="mt-4 flex justify-between items-center">
+                        <span class="font-label-caps text-[10px] text-on-surface-variant">CLIQUE PARA INICIAR BRIEFING</span>
+                        <span class="material-symbols-outlined text-primary text-sm">arrow_forward</span>
+                    </div>
+                </div>`;
+        });
+
+        const detailRight = document.getElementById('formula-detail-right');
+        detailRight.style.borderColor = currentMateria.cor;
+        detailRight.style.boxShadow = `0 0 20px ${currentMateria.cor}33, 8px 8px 0px 0px rgba(0,0,0,1)`;
+        showView('formula');
+    }
+
+    // --- MODAL FUNCTIONS ---
+    function openMissionModal(mission) {
+        currentMission = mission;
+        const modal = document.getElementById('mission-modal');
+        document.getElementById('modal-img').src = mission.img;
+        document.getElementById('modal-id').innerText = `MISSION_#${mission.id.toString().padStart(2, '0')}`;
+        document.getElementById('modal-universe').innerText = `UNIVERSE: ${mission.universe.toUpperCase()}`;
+        document.getElementById('modal-title').innerText = currentFormula.nome;
+        document.getElementById('modal-prompt').innerText = mission.enunciado;
+        
+        document.getElementById('modal-gabarito').innerText = mission.gabarito;
+        
+        const answerContainer = document.getElementById('modal-gabarito-container');
+        const revealBtn = document.getElementById('modal-reveal-btn');
+        
+        answerContainer.classList.remove('revealed');
+        revealBtn.innerText = 'REVELAR GABARITO';
+        revealBtn.style.backgroundColor = '';
+        revealBtn.style.color = '';
+
+        modal.classList.add('modal-active');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeMissionModal(e) {
+        document.getElementById('mission-modal').classList.remove('modal-active');
+        document.body.style.overflow = '';
+    }
+
+    function toggleModalAnswer() {
+        const answer = document.getElementById('modal-gabarito-container');
+        const btn = document.getElementById('modal-reveal-btn');
+        const isRevealed = answer.classList.contains('revealed');
+        
+        if(!isRevealed) {
+            answer.classList.add('revealed');
+            btn.innerText = 'OCULTAR GABARITO';
+            btn.style.backgroundColor = currentMateria ? currentMateria.cor : '#c9c6c5';
+            btn.style.color = '#000';
+            
+            const textElement = document.getElementById('modal-gabarito');
+            textElement.style.opacity = '0';
+            setTimeout(() => {
+                textElement.style.opacity = '1';
+            }, 50);
+        } else {
+            answer.classList.remove('revealed');
+            btn.innerText = 'REVELAR GABARITO';
+            btn.style.backgroundColor = '';
+            btn.style.color = '';
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        init();
+        document.addEventListener('keydown', (e) => {
+            if(e.key === 'Escape') closeMissionModal();
+        });
+    });
+</script>
+```</body></html>
